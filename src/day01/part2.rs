@@ -9,20 +9,19 @@ pub fn run(input: &str) -> Result<String> {
     let mut times_at_zero = 0;
     for rotation in rotations {
         let current = *dial.front().ok_or(anyhow::anyhow!("dial is empty"))?;
-        let is_already_at_zero = current == 0;
         let overlaps = rotation.steps / 100;
         let steps = rotation.steps % 100;
 
         match rotation.direction {
             Direction::Left => {
-                if !is_already_at_zero && steps > current {
+                if steps > current && current != 0 {
                     times_at_zero += 1;
                 }
 
                 dial.rotate_left(steps)
             }
             Direction::Right => {
-                if !is_already_at_zero && steps + current > 100 {
+                if steps + current > 100 {
                     times_at_zero += 1;
                 }
 

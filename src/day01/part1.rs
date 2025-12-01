@@ -8,9 +8,11 @@ pub fn run(input: &str) -> Result<String> {
 
     let mut times_at_zero = 0;
     for rotation in rotations {
+        let steps = rotation.steps % 100;
+
         match rotation.direction {
-            Direction::Left => dial.rotate_left(rotation.steps % 100),
-            Direction::Right => dial.rotate_right(rotation.steps % 100),
+            Direction::Left => dial.rotate_left(steps),
+            Direction::Right => dial.rotate_right(steps),
         }
 
         if dial.front() == Some(&0) {
