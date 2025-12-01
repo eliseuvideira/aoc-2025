@@ -41,6 +41,10 @@ pub fn parse_line(line: &str) -> Result<Rotation> {
     Ok(Rotation { direction, steps })
 }
 
+pub fn parse_lines(lines: &str) -> Result<Vec<Rotation>> {
+    lines.lines().map(parse_line).collect::<Result<Vec<_>>>()
+}
+
 pub fn create_dial() -> VecDeque<usize> {
     let mut dial = VecDeque::new();
     for i in 0..100 {

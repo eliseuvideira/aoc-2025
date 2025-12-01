@@ -1,9 +1,9 @@
 use anyhow::Result;
 
-use super::{Direction, create_dial, parse_line};
+use super::{Direction, create_dial, parse_lines};
 
 pub fn run(input: &str) -> Result<String> {
-    let rotations = input.lines().map(parse_line).collect::<Result<Vec<_>>>()?;
+    let rotations = parse_lines(input)?;
     let mut dial = create_dial();
 
     let mut times_at_zero = 0;
