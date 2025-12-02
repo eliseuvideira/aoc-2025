@@ -23,8 +23,8 @@ fn main() -> Result<()> {
     let result = match (args.day, args.part) {
         (1, 1) => day01::part1::run(include_str!("../inputs/day01.txt"))?,
         (1, 2) => day01::part2::run(include_str!("../inputs/day01.txt"))?,
-        (2, 1) => day02::part1()?,
-        (2, 2) => day02::part2()?,
+        (2, 1) => day02::part1::run(include_str!("../inputs/day02.txt"))?,
+        (2, 2) => day02::part2::run(include_str!("../inputs/day02.txt"))?,
         (3, 1) => day03::part1()?,
         (3, 2) => day03::part2()?,
         (4, 1) => day04::part1()?,
@@ -55,15 +55,7 @@ fn main() -> Result<()> {
 
 mod day01;
 
-mod day02 {
-    use anyhow::Result;
-    pub fn part1() -> Result<String> {
-        todo!()
-    }
-    pub fn part2() -> Result<String> {
-        todo!()
-    }
-}
+mod day02;
 
 mod day03 {
     use anyhow::Result;
