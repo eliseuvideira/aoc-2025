@@ -4,6 +4,9 @@ use std::ops::RangeInclusive;
 pub mod part1;
 pub mod part2;
 
+#[cfg(test)]
+mod bench;
+
 fn parse_range(line: &str) -> Result<RangeInclusive<usize>> {
     let (min, max) = line
         .split_once('-')

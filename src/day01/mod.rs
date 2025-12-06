@@ -3,6 +3,9 @@ use std::fmt;
 pub mod part1;
 pub mod part2;
 
+#[cfg(test)]
+mod bench;
+
 use std::collections::VecDeque;
 
 use anyhow::{Result, bail};
