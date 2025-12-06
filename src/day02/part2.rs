@@ -11,20 +11,13 @@ fn is_repeating_by_base(number: usize, base: usize) -> bool {
         return false;
     }
 
-    let rem = number % pow;
+    let pattern = number % pow;
+    let mut n = number / pow;
 
-    let mut n = number;
     while n > 0 {
-        if n * 10 < pow {
+        if n % pow != pattern {
             return false;
         }
-
-        let digit = n % pow;
-
-        if digit != rem {
-            return false;
-        }
-
         n /= pow;
     }
 
