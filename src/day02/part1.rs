@@ -23,8 +23,8 @@ pub fn run(input: &str) -> Result<String> {
     let ranges = parse_ranges(input)?;
 
     let sum: usize = ranges
-        .iter()
-        .flat_map(|r| r.min..=r.max)
+        .into_iter()
+        .flat_map(|r| r)
         .filter(|&n| is_repeating(n))
         .sum();
 
