@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use super::{Direction, create_dial, parse_lines};
 
@@ -8,7 +8,7 @@ pub fn run(input: &str) -> Result<String> {
 
     let mut times_at_zero = 0;
     for rotation in rotations {
-        let current = *dial.front().ok_or(anyhow::anyhow!("dial is empty"))?;
+        let current = *dial.front().context("dial is empty")?;
         let overlaps = rotation.steps / 100;
         let steps = rotation.steps % 100;
 
