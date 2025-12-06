@@ -1,27 +1,27 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::fmt;
 
 pub mod part1;
 pub mod part2;
 
 pub struct Range {
-    pub start: usize,
-    pub end: usize,
+    pub min: usize,
+    pub max: usize,
 }
 
 impl fmt::Display for Range {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}..={}", self.start, self.end)
+        write!(f, "{}..={}", self.min, self.max)
     }
 }
 
 fn parse_range(line: &str) -> Result<Range> {
-    let (start, end) = line
+    let (min, max) = line
         .split_once('-')
-        .ok_or(anyhow::anyhow!("invalid range: {}", line))?;
+        .context(format!("invalid range: {}", line))?;
     Ok(Range {
-        start: start.parse::<usize>()?,
-        end: end.parse::<usize>()?,
+        min: min.parse::<usize>().context(format!("invalid min: {}", min))?,
+        max: max.parse::<usize>().context(format!("invalid max: {}", max))?,
     })
 }
 

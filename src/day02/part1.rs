@@ -22,14 +22,11 @@ fn is_repeating(number: usize) -> bool {
 pub fn run(input: &str) -> Result<String> {
     let ranges = parse_ranges(input)?;
 
-    let mut sum = 0;
-    for range in ranges {
-        for number in range.start..=range.end {
-            if is_repeating(number) {
-                sum += number;
-            }
-        }
-    }
+    let sum: usize = ranges
+        .iter()
+        .flat_map(|r| r.min..=r.max)
+        .filter(|&n| is_repeating(n))
+        .sum();
 
     Ok(sum.to_string())
 }
