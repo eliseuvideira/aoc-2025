@@ -10,6 +10,12 @@ mod bench;
 
 pub type Locations = HashSet<(i32, i32)>;
 
+const ADJACENT_OFFSETS: [(i32, i32); 8] = [
+    (-1, -1), (-1, 0), (-1, 1),
+    (0, -1), (0, 1),
+    (1, -1), (1, 0), (1, 1),
+];
+
 pub fn parse_locations(input: &str) -> Result<Locations> {
     let mut locations = HashSet::new();
     let mut y = 0;
@@ -35,24 +41,20 @@ pub fn parse_locations(input: &str) -> Result<Locations> {
     Ok(locations)
 }
 
-pub fn get_adjacent_positions(x: i32, y: i32) -> [(i32, i32); 8] {
-    [
-        (x - 1, y - 1),
-        (x - 1, y),
-        (x - 1, y + 1),
-        (x, y - 1),
-        (x, y + 1),
-        (x + 1, y - 1),
-        (x + 1, y),
-        (x + 1, y + 1),
-    ]
-}
-
 pub fn can_be_accessed(x: i32, y: i32, locations: &Locations) -> bool {
-    locations.contains(&(x, y))
-        && get_adjacent_positions(x, y)
-            .iter()
-            .filter(|pos| locations.contains(pos))
-            .count()
-            < 4
+    if !locations.contains(&(x, y)) {
+        return false;
+    }
+
+    let mut count = 0;
+    for &(dx, dy) in &ADJACENT_OFFSETS {
+        if locations.contains(&(x + dx, y + dy)) {
+            count += 1;
+            if count >= 4 {
+                return false;
+            }
+        }
+    }
+
+    true
 }
