@@ -46,10 +46,7 @@ pub fn parse_lines(lines: &str) -> Result<Vec<Rotation>> {
 }
 
 pub fn create_dial() -> VecDeque<usize> {
-    let mut dial = VecDeque::new();
-    for i in 0..100 {
-        dial.push_front(i);
-    }
+    let mut dial: VecDeque<usize> = (0..100).rev().collect();
     dial.rotate_right(51);
     dial
 }
