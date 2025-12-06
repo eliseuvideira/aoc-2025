@@ -2,21 +2,15 @@ use anyhow::Result;
 
 use super::{digit_count, parse_ranges};
 
-fn middle_point(number: usize) -> Option<usize> {
-    let digits = digit_count(number);
-    if digits == 1 {
-        return None;
-    }
-
-    Some(10_usize.pow(digits as u32 / 2))
-}
-
 fn is_repeating(number: usize) -> bool {
-    if let Some(middle_point) = middle_point(number) {
-        number % middle_point == number / middle_point
-    } else {
-        false
+    let digits = digit_count(number);
+
+    if digits % 2 != 0 {
+        return false;
     }
+
+    let divisor = 10_usize.pow((digits / 2) as u32);
+    number / divisor == number % divisor
 }
 
 pub fn run(input: &str) -> Result<String> {
