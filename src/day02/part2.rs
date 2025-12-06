@@ -32,7 +32,12 @@ fn is_repeating_by_base(number: usize, base: usize) -> bool {
 }
 
 fn is_repeating(number: usize) -> bool {
-    for base in 1..=digit_count(number) {
+    let digits = digit_count(number);
+
+    for base in 1..=digits {
+        if digits % base != 0 {
+            continue;
+        }
         if is_repeating_by_base(number, base) {
             return true;
         }
