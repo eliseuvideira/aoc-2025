@@ -44,7 +44,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn day01_part2_example() -> Result<()> {
+    fn example() -> Result<()> {
         let input = "L68
 L30
 R48
