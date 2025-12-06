@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 pub mod part1;
 pub mod part2;
@@ -10,11 +10,13 @@ pub fn parse_lines(input: &str) -> Result<Vec<Vec<u8>>> {
     input
         .lines()
         .map(|line| {
-            let digits = line
-                .chars()
-                .map(|c| c.to_digit(10).unwrap() as u8)
-                .collect();
-            Ok(digits)
+            line.chars()
+                .map(|c| {
+                    c.to_digit(10)
+                        .map(|d| d as u8)
+                        .context(format!("invalid digit: {}", c))
+                })
+                .collect::<Result<Vec<_>>>()
         })
         .collect::<Result<Vec<_>>>()
 }
