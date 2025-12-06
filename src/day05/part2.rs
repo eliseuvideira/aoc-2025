@@ -9,14 +9,11 @@ pub fn run(input: &str) -> Result<String> {
 
     let mut merged: Vec<Range> = vec![];
     for range in ranges {
-        if let Some(last) = merged.last_mut() {
-            if range.min <= last.max + 1 {
+        match merged.last_mut() {
+            Some(last) if range.min <= last.max + 1 => {
                 last.max = last.max.max(range.max);
-            } else {
-                merged.push(range);
             }
-        } else {
-            merged.push(range);
+            _ => merged.push(range),
         }
     }
 

@@ -5,15 +5,10 @@ use super::parse_database;
 pub fn run(input: &str) -> Result<String> {
     let (ranges, ingredients) = parse_database(input)?;
 
-    let mut fresh_ingredients = 0;
-    for ingredient in ingredients {
-        for range in ranges.iter() {
-            if ingredient >= range.min && ingredient <= range.max {
-                fresh_ingredients += 1;
-                break;
-            }
-        }
-    }
+    let fresh_ingredients = ingredients
+        .iter()
+        .filter(|&&i| ranges.iter().any(|r| i >= r.min && i <= r.max))
+        .count();
 
     Ok(fresh_ingredients.to_string())
 }
