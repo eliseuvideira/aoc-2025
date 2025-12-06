@@ -34,11 +34,8 @@ pub fn parse_ranges(input: &str) -> Result<Vec<Range>> {
 }
 
 pub fn digit_count(number: usize) -> usize {
-    let mut count = 0;
-    let mut n = number;
-    while n > 0 {
-        count += 1;
-        n /= 10;
+    if number == 0 {
+        return 1;
     }
-    count
+    number.ilog10() as usize + 1
 }
