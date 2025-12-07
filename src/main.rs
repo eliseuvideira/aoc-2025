@@ -35,8 +35,8 @@ fn main() -> Result<()> {
         (5, 2) => day05::part2::run(include_str!("../inputs/day05.txt"))?,
         (6, 1) => day06::part1::run(include_str!("../inputs/day06.txt"))?,
         (6, 2) => day06::part2::run(include_str!("../inputs/day06.txt"))?,
-        (7, 1) => day07::part1()?,
-        (7, 2) => day07::part2()?,
+        (7, 1) => day07::part1::run(include_str!("../inputs/day07.txt"))?,
+        (7, 2) => day07::part2::run(include_str!("../inputs/day07.txt"))?,
         (8, 1) => day08::part1()?,
         (8, 2) => day08::part2()?,
         (9, 1) => day09::part1()?,
@@ -67,15 +67,7 @@ mod day05;
 
 mod day06;
 
-mod day07 {
-    use anyhow::Result;
-    pub fn part1() -> Result<String> {
-        todo!()
-    }
-    pub fn part2() -> Result<String> {
-        todo!()
-    }
-}
+mod day07;
 
 mod day08 {
     use anyhow::Result;
