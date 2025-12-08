@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::Result;
 
-use crate::day07::{Position, parse_input};
+use super::{Position, parse_input};
 
 fn count_worlds(
     pos: Position,

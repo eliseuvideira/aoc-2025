@@ -1,8 +1,6 @@
 use anyhow::Result;
 
-use crate::day04::{Locations, can_be_accessed};
-
-use super::parse_locations;
+use super::{Locations, can_be_accessed, parse_locations};
 
 fn get_possible_moves(locations: &Locations) -> Vec<(i32, i32)> {
     locations

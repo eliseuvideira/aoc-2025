@@ -1,8 +1,6 @@
 use anyhow::Result;
 
-use crate::day04::can_be_accessed;
-
-use super::parse_locations;
+use super::{can_be_accessed, parse_locations};
 
 pub fn run(input: &str) -> Result<String> {
     let locations = parse_locations(input)?;

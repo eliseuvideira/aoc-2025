@@ -1,8 +1,6 @@
 use anyhow::Result;
 
-use crate::day02::digit_count;
-
-use super::parse_ranges;
+use super::{digit_count, parse_ranges};
 
 fn is_repeating_by_base(number: usize, base: usize) -> bool {
     let pow = 10_usize.pow(base as u32);

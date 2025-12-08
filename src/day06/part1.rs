@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 
-use crate::day06::Operator;
+use super::Operator;
 
 fn parse_operators(last_line: &str) -> Result<Vec<Operator>> {
     last_line.split_whitespace().map(|op| op.parse()).collect()

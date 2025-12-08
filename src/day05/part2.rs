@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::day05::{Range, parse_database};
+use super::{Range, parse_database};
 
 pub fn run(input: &str) -> Result<String> {
     let (mut ranges, _) = parse_database(input)?;

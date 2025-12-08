@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::day03::{find_index, parse_lines};
+use super::{find_index, parse_lines};
 
 fn get_max_jolt(digits: &[u8]) -> u64 {
     let mut max_jolt = 0;
