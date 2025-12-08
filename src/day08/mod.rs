@@ -40,11 +40,14 @@ pub fn all_pairs_by_distance(positions: &[Position]) -> Vec<(u64, Position, Posi
     pairs
 }
 
-pub fn find_circuit(position: Position, circuit_of: &HashMap<Position, Position>) -> Position {
-    match circuit_of.get(&position) {
-        Some(&circuit) if circuit != position => find_circuit(circuit, circuit_of),
-        _ => position,
+pub fn find_circuit(position: Position, circuit_of: &mut HashMap<Position, Position>) -> Position {
+    let parent = circuit_of[&position];
+    if parent == position {
+        return position;
     }
+    let root = find_circuit(parent, circuit_of);
+    circuit_of.insert(position, root);
+    root
 }
 
 pub fn join_circuits(p1: Position, p2: Position, circuit_of: &mut HashMap<Position, Position>) -> bool {

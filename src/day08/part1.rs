@@ -4,9 +4,10 @@ use anyhow::Result;
 
 use super::{all_pairs_by_distance, find_circuit, join_circuits, parse_positions, Position};
 
-fn collect_circuit_sizes(circuit_of: &HashMap<Position, Position>) -> Vec<usize> {
+fn collect_circuit_sizes(circuit_of: &mut HashMap<Position, Position>) -> Vec<usize> {
+    let positions: Vec<_> = circuit_of.keys().copied().collect();
     let mut size_by_circuit: HashMap<Position, usize> = HashMap::new();
-    for &position in circuit_of.keys() {
+    for position in positions {
         let circuit = find_circuit(position, circuit_of);
         *size_by_circuit.entry(circuit).or_default() += 1;
     }
@@ -26,7 +27,7 @@ pub fn run(input: &str) -> Result<String> {
         join_circuits(p1, p2, &mut circuit_of);
     }
 
-    let mut sizes = collect_circuit_sizes(&circuit_of);
+    let mut sizes = collect_circuit_sizes(&mut circuit_of);
     sizes.sort_by_key(|&s| std::cmp::Reverse(s));
 
     let result = sizes.iter().take(3).product::<usize>();
