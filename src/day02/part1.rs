@@ -5,7 +5,7 @@ use super::{digit_count, parse_ranges};
 fn is_repeating(number: usize) -> bool {
     let digits = digit_count(number);
 
-    if digits % 2 != 0 {
+    if !digits.is_multiple_of(2) {
         return false;
     }
 
@@ -18,7 +18,7 @@ pub fn run(input: &str) -> Result<String> {
 
     let sum: usize = ranges
         .into_iter()
-        .flat_map(|r| r)
+        .flatten()
         .filter(|&n| is_repeating(n))
         .sum();
 

@@ -3,10 +3,7 @@ use anyhow::{Context, Result};
 use crate::day06::Operator;
 
 fn parse_operators(last_line: &str) -> Result<Vec<Operator>> {
-    last_line
-        .split_whitespace()
-        .map(|op| op.parse())
-        .collect()
+    last_line.split_whitespace().map(|op| op.parse()).collect()
 }
 
 fn parse_operands(lines: &[&str]) -> Result<Vec<Vec<u64>>> {

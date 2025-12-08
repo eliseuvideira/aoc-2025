@@ -11,31 +11,29 @@ mod bench;
 pub type Locations = HashSet<(i32, i32)>;
 
 const ADJACENT_OFFSETS: [(i32, i32); 8] = [
-    (-1, -1), (-1, 0), (-1, 1),
-    (0, -1), (0, 1),
-    (1, -1), (1, 0), (1, 1),
+    (-1, -1),
+    (-1, 0),
+    (-1, 1),
+    (0, -1),
+    (0, 1),
+    (1, -1),
+    (1, 0),
+    (1, 1),
 ];
 
 pub fn parse_locations(input: &str) -> Result<Locations> {
     let mut locations = HashSet::new();
-    let mut y = 0;
 
-    for line in input.lines() {
-        let mut x = 0;
-
-        for c in line.chars() {
+    for (y, line) in input.lines().enumerate() {
+        for (x, c) in line.chars().enumerate() {
             match c {
                 '@' => {
-                    locations.insert((x, y));
+                    locations.insert((x as i32, y as i32));
                 }
                 '.' => (),
                 _ => bail!("invalid character: {}", c),
             };
-
-            x += 1;
         }
-
-        y += 1;
     }
 
     Ok(locations)

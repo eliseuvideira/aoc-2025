@@ -50,7 +50,11 @@ pub fn find_circuit(position: Position, circuit_of: &mut HashMap<Position, Posit
     root
 }
 
-pub fn join_circuits(p1: Position, p2: Position, circuit_of: &mut HashMap<Position, Position>) -> bool {
+pub fn join_circuits(
+    p1: Position,
+    p2: Position,
+    circuit_of: &mut HashMap<Position, Position>,
+) -> bool {
     let circuit1 = find_circuit(p1, circuit_of);
     let circuit2 = find_circuit(p2, circuit_of);
     if circuit1 != circuit2 {

@@ -21,7 +21,9 @@ fn count_worlds(
             };
             let right = match cache.get(&(x + 1, y + dy)) {
                 Some(count) => *count,
-                None if x < max_x => count_worlds((x + 1, y + dy), splitters, (max_x, max_y), cache),
+                None if x < max_x => {
+                    count_worlds((x + 1, y + dy), splitters, (max_x, max_y), cache)
+                }
                 None => 0,
             };
 

@@ -28,7 +28,7 @@ fn is_repeating(number: usize) -> bool {
     let digits = digit_count(number);
 
     for base in 1..=digits {
-        if digits % base != 0 {
+        if !digits.is_multiple_of(base) {
             continue;
         }
         if is_repeating_by_base(number, base) {
@@ -44,7 +44,7 @@ pub fn run(input: &str) -> Result<String> {
 
     let sum: usize = ranges
         .into_iter()
-        .flat_map(|r| r)
+        .flatten()
         .filter(|&n| is_repeating(n))
         .sum();
 

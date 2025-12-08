@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::{Context, Result};
 
-use super::{all_pairs_by_distance, join_circuits, parse_positions, Position};
+use super::{Position, all_pairs_by_distance, join_circuits, parse_positions};
 
 fn find_last_connection(
     pairs: &[(u64, Position, Position)],
@@ -25,8 +25,7 @@ pub fn run(input: &str) -> Result<String> {
     let positions = parse_positions(input)?;
     let pairs = all_pairs_by_distance(&positions);
 
-    let mut circuit_of: HashMap<Position, Position> =
-        positions.iter().map(|&p| (p, p)).collect();
+    let mut circuit_of: HashMap<Position, Position> = positions.iter().map(|&p| (p, p)).collect();
 
     let (p1, p2) =
         find_last_connection(&pairs, &mut circuit_of).context("no last connection found")?;

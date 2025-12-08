@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 
-use super::{all_pairs_by_distance, find_circuit, join_circuits, parse_positions, Position};
+use super::{Position, all_pairs_by_distance, find_circuit, join_circuits, parse_positions};
 
 fn collect_circuit_sizes(circuit_of: &mut HashMap<Position, Position>) -> Vec<usize> {
     let positions: Vec<_> = circuit_of.keys().copied().collect();
@@ -16,12 +16,11 @@ fn collect_circuit_sizes(circuit_of: &mut HashMap<Position, Position>) -> Vec<us
 
 pub fn run(input: &str) -> Result<String> {
     let positions = parse_positions(input)?;
-    let connection_count = if positions.len() > 20 { 1000 } else { 10 };
+    let connection_count = 10_usize.pow(positions.len().ilog10() as u32);
 
     let pairs = all_pairs_by_distance(&positions);
 
-    let mut circuit_of: HashMap<Position, Position> =
-        positions.iter().map(|&p| (p, p)).collect();
+    let mut circuit_of: HashMap<Position, Position> = positions.iter().map(|&p| (p, p)).collect();
 
     for (_, p1, p2) in pairs.into_iter().take(connection_count) {
         join_circuits(p1, p2, &mut circuit_of);
