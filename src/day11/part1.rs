@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use anyhow::{Context, Result};
 
@@ -8,28 +8,18 @@ const START_DEVICE: &str = "you";
 const END_DEVICE: &str = "out";
 
 fn count_possible_paths(
-    device_outputs: &HashMap<String, Vec<String>>,
+    device_outputs: &HashMap<&str, Vec<&str>>,
     device: &str,
-    seen: &mut HashSet<Vec<String>>,
-    current_path: &mut Vec<String>,
 ) -> Result<u32> {
     if device == END_DEVICE {
         return Ok(1);
     }
 
-    if seen.contains(current_path) {
-        return Ok(0);
-    }
-
-    seen.insert(current_path.clone());
-
     let outputs = device_outputs.get(device).context("device not found")?;
 
     let mut count = 0;
     for output in outputs {
-        current_path.push(output.clone());
-        count += count_possible_paths(device_outputs, output, seen, current_path)?;
-        current_path.pop();
+        count += count_possible_paths(device_outputs, output)?;
     }
 
     Ok(count)
@@ -38,12 +28,7 @@ fn count_possible_paths(
 pub fn run(input: &str) -> Result<String> {
     let device_outputs = parse_input(input)?;
 
-    let possible_paths = count_possible_paths(
-        &device_outputs,
-        START_DEVICE,
-        &mut HashSet::new(),
-        &mut Vec::new(),
-    )?;
+    let possible_paths = count_possible_paths(&device_outputs, START_DEVICE)?;
 
     Ok(possible_paths.to_string())
 }

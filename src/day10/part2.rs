@@ -138,7 +138,7 @@ fn find_leading_col(equation: &Equation) -> Option<usize> {
 }
 
 struct Formula {
-    variable: usize, // which column/variable this formula solves for
+    variable: usize,
     constant: Fraction,
     terms: Vec<(usize, Fraction)>,
 }
@@ -287,11 +287,20 @@ fn find_minimum_presses(
     formulas: &[Formula],
     unbound_values: &mut Vec<i64>,
     depth: usize,
-    num_cols: usize,
+    #[cfg(debug_assertions)] num_cols: usize,
     max_val: i64,
+    current_best: Option<i64>,
 ) -> Option<i64> {
+    let partial_sum: i64 = unbound_values.iter().sum();
+    if let Some(best) = current_best {
+        if partial_sum >= best {
+            return None;
+        }
+    }
+
     if depth == formulas.first().map_or(0, |f| f.terms.len()) {
-        let mut sum: i64 = unbound_values.iter().sum();
+        let mut sum = partial_sum;
+        #[cfg(debug_assertions)]
         let mut solution = Vec::new();
 
         for formula in formulas {
@@ -301,6 +310,12 @@ fn find_minimum_presses(
             if val < 0 {
                 return None;
             }
+            if let Some(best) = current_best {
+                if sum + val >= best {
+                    return None;
+                }
+            }
+            #[cfg(debug_assertions)]
             solution.push((formula.variable, val));
             sum += val;
         }
@@ -311,10 +326,18 @@ fn find_minimum_presses(
         return Some(sum);
     }
 
-    let mut min: Option<i64> = None;
+    let mut min = current_best;
     for v in 0..=max_val {
         unbound_values.push(v);
-        if let Some(result) = find_minimum_presses(formulas, unbound_values, depth + 1, num_cols, max_val) {
+        if let Some(result) = find_minimum_presses(
+            formulas,
+            unbound_values,
+            depth + 1,
+            #[cfg(debug_assertions)]
+            num_cols,
+            max_val,
+            min,
+        ) {
             min = Some(min.map_or(result, |m| m.min(result)));
         }
         unbound_values.pop();
@@ -454,7 +477,16 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
 
     #[cfg(debug_assertions)]
     print_solutions_header(num_elements);
-    let min = find_minimum_presses(&formulas, &mut Vec::new(), 0, num_elements, max_val).unwrap_or(0);
+    let min = find_minimum_presses(
+        &formulas,
+        &mut Vec::new(),
+        0,
+        #[cfg(debug_assertions)]
+        num_elements,
+        max_val,
+        None,
+    )
+    .unwrap_or(0);
     #[cfg(debug_assertions)]
     print_minimum(num_elements, min);
     min

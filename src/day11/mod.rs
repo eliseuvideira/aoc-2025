@@ -8,17 +8,13 @@ pub mod part2;
 #[cfg(test)]
 mod bench;
 
-pub fn parse_input(input: &str) -> Result<HashMap<String, Vec<String>>> {
+pub fn parse_input(input: &str) -> Result<HashMap<&str, Vec<&str>>> {
     let mut map = HashMap::new();
 
     for line in input.lines() {
         let (key, value) = line.split_once(':').context("expected colon")?;
-        let value = value
-            .trim_start()
-            .split_whitespace()
-            .map(|s| s.to_string())
-            .collect::<Vec<_>>();
-        map.insert(key.to_string(), value);
+        let value: Vec<_> = value.trim_start().split_whitespace().collect();
+        map.insert(key, value);
     }
 
     Ok(map)
