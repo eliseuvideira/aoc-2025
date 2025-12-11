@@ -1,7 +1,10 @@
 use anyhow::Result;
 use std::fmt;
+use std::ops::{Div, Mul, Sub};
 
-use super::{Button, Joltage, Machine, parse_machines};
+#[cfg(debug_assertions)]
+use super::{Button, Joltage};
+use super::{Machine, parse_machines};
 
 #[derive(Clone, Copy)]
 struct Fraction(i64, i64);
@@ -45,6 +48,7 @@ fn gcd(a: i64, b: i64) -> i64 {
 }
 
 impl Fraction {
+    #[must_use]
     fn simplify(self) -> Self {
         if self.0 == 0 {
             return Self(0, 1);
@@ -53,24 +57,35 @@ impl Fraction {
         Self(self.0 / g, self.1 / g)
     }
 
-    fn is_zero(&self) -> bool {
+    #[must_use]
+    fn is_zero(self) -> bool {
         self.0 == 0 && self.1 != 0
     }
 
-    fn is_integer(&self) -> bool {
+    #[must_use]
+    fn is_integer(self) -> bool {
         self.1 != 0 && self.0 % self.1 == 0
     }
+}
 
-    fn mul(&self, other: &Self) -> Self {
-        Self(self.0 * other.0, self.1 * other.1).simplify()
+impl Mul for Fraction {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self {
+        Self(self.0 * rhs.0, self.1 * rhs.1).simplify()
     }
+}
 
-    fn sub(&self, other: &Self) -> Self {
-        Self(self.0 * other.1 - other.0 * self.1, self.1 * other.1).simplify()
+impl Sub for Fraction {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self {
+        Self(self.0 * rhs.1 - rhs.0 * self.1, self.1 * rhs.1).simplify()
     }
+}
 
-    fn div(&self, other: &Self) -> Self {
-        Self(self.0 * other.1, self.1 * other.0).simplify()
+impl Div for Fraction {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self {
+        Self(self.0 * rhs.1, self.1 * rhs.0).simplify()
     }
 }
 
@@ -99,26 +114,27 @@ impl fmt::Debug for Equation {
 impl Equation {
     fn mul_const(&self, value: Fraction) -> Self {
         Self {
-            elements: self.elements.iter().map(|e| e.mul(&value)).collect(),
-            constant: self.constant.mul(&value),
+            elements: self.elements.iter().map(|&e| e * value).collect(),
+            constant: self.constant * value,
         }
     }
 
     fn sub(&self, other: &Self) -> Self {
+        assert_eq!(self.elements.len(), other.elements.len());
         Self {
             elements: self
                 .elements
                 .iter()
                 .zip(other.elements.iter())
-                .map(|(a, b)| a.sub(b))
+                .map(|(&a, &b)| a - b)
                 .collect(),
-            constant: self.constant.sub(&other.constant),
+            constant: self.constant - other.constant,
         }
     }
 }
 
 fn find_leading_col(equation: &Equation) -> Option<usize> {
-    equation.elements.iter().position(|e| !e.is_zero())
+    equation.elements.iter().position(|&e| !e.is_zero())
 }
 
 struct Formula {
@@ -132,10 +148,10 @@ impl Formula {
         let divisor = equation.elements[leading_col];
         Self {
             variable: leading_col,
-            constant: equation.constant.div(&divisor),
+            constant: equation.constant / divisor,
             terms: unbound_cols
                 .iter()
-                .map(|&col| (col, equation.elements[col].div(&divisor)))
+                .map(|&col| (col, equation.elements[col] / divisor))
                 .collect(),
         }
     }
@@ -143,9 +159,9 @@ impl Formula {
     fn evaluate(&self, unbound_values: &[i64]) -> Option<i64> {
         let mut result = self.constant;
 
-        for ((_, coeff), &val) in self.terms.iter().zip(unbound_values.iter()) {
-            let term = coeff.mul(&Fraction::from(val));
-            result = result.sub(&term);
+        for (&(_, coeff), &val) in self.terms.iter().zip(unbound_values.iter()) {
+            let term = coeff * Fraction::from(val);
+            result = result - term;
         }
 
         if !result.is_integer() {
@@ -159,11 +175,11 @@ impl fmt::Display for Formula {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let constant: i64 = self.constant.into();
         write!(f, "x{} = {}", self.variable, constant)?;
-        for (col, coeff) in &self.terms {
+        for &(col, coeff) in &self.terms {
             if coeff.is_zero() {
                 continue;
             }
-            let val: i64 = (*coeff).into();
+            let val: i64 = coeff.into();
             if val == 1 {
                 write!(f, " - x{}", col)?;
             } else if val == -1 {
@@ -178,6 +194,7 @@ impl fmt::Display for Formula {
     }
 }
 
+#[cfg(debug_assertions)]
 fn print_formulas(formulas: &[Formula]) {
     for formula in formulas {
         println!("{}", formula);
@@ -185,6 +202,7 @@ fn print_formulas(formulas: &[Formula]) {
     println!();
 }
 
+#[cfg(debug_assertions)]
 fn print_bound_unbound(bound_cols: &[usize], unbound_cols: &[usize], num_cols: usize) {
     print!(" B => ");
     for i in 0..num_cols {
@@ -208,6 +226,7 @@ fn print_bound_unbound(bound_cols: &[usize], unbound_cols: &[usize], num_cols: u
     println!();
 }
 
+#[cfg(debug_assertions)]
 fn print_solutions_header(num_cols: usize) {
     print!("      ");
     for i in 0..num_cols {
@@ -216,6 +235,7 @@ fn print_solutions_header(num_cols: usize) {
     println!("             S");
 }
 
+#[cfg(debug_assertions)]
 fn print_minimum(num_cols: usize, min: i64) {
     print!("      ");
     for _ in 0..num_cols {
@@ -225,6 +245,7 @@ fn print_minimum(num_cols: usize, min: i64) {
     println!();
 }
 
+#[cfg(debug_assertions)]
 fn print_minimum_presses(
     formulas: &[Formula],
     unbound_values: &[i64],
@@ -284,6 +305,7 @@ fn find_minimum_presses(
             sum += val;
         }
 
+        #[cfg(debug_assertions)]
         print_minimum_presses(formulas, unbound_values, &solution, num_cols, sum);
 
         return Some(sum);
@@ -300,6 +322,7 @@ fn find_minimum_presses(
     min
 }
 
+#[cfg(debug_assertions)]
 fn print_buttons_and_joltages(buttons: &[Button], joltage_requirements: &[Joltage]) {
     print!("      ");
     for i in 0..joltage_requirements.len() {
@@ -327,6 +350,7 @@ fn print_buttons_and_joltages(buttons: &[Button], joltage_requirements: &[Joltag
     println!();
 }
 
+#[cfg(debug_assertions)]
 fn print_matrix(buttons: &[Button], equations: &[Equation]) {
     print!("      ");
     for i in 0..buttons.len() {
@@ -346,6 +370,7 @@ fn print_matrix(buttons: &[Button], equations: &[Equation]) {
 }
 
 fn min_presses_for_machine(machine: &Machine) -> i64 {
+    #[cfg(debug_assertions)]
     print_buttons_and_joltages(&machine.buttons, &machine.joltage_requirements);
 
     let num_elements = machine.buttons.len();
@@ -364,6 +389,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
         }
     }
 
+    #[cfg(debug_assertions)]
     print_matrix(&machine.buttons, &equations);
 
     let total_equations = equations.len();
@@ -384,7 +410,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
                 continue;
             }
 
-            let multiplier = equations[row].elements[column].div(&current_element);
+            let multiplier = equations[row].elements[column] / current_element;
             let equation = equations[current_row].mul_const(multiplier);
             equations[row] = equations[row].sub(&equation);
         }
@@ -395,6 +421,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
         }
     }
 
+    #[cfg(debug_assertions)]
     print_matrix(&machine.buttons, &equations);
 
     let leading_cols: Vec<Option<usize>> = equations.iter().map(find_leading_col).collect();
@@ -404,6 +431,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
         .filter(|c| !bound_cols.contains(c))
         .collect();
 
+    #[cfg(debug_assertions)]
     print_bound_unbound(&bound_cols, &unbound_cols, num_elements);
 
     let formulas: Vec<Formula> = equations
@@ -414,6 +442,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
         })
         .collect();
 
+    #[cfg(debug_assertions)]
     print_formulas(&formulas);
 
     let max_val = machine
@@ -423,8 +452,10 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
         .copied()
         .unwrap_or(0) as i64;
 
+    #[cfg(debug_assertions)]
     print_solutions_header(num_elements);
     let min = find_minimum_presses(&formulas, &mut Vec::new(), 0, num_elements, max_val).unwrap_or(0);
+    #[cfg(debug_assertions)]
     print_minimum(num_elements, min);
     min
 }
@@ -432,11 +463,7 @@ fn min_presses_for_machine(machine: &Machine) -> i64 {
 pub fn run(input: &str) -> Result<String> {
     let machines = parse_machines(input)?;
 
-    let mut total = 0;
-    for machine in machines {
-        let res = min_presses_for_machine(&machine);
-        total += res;
-    }
+    let total: i64 = machines.iter().map(min_presses_for_machine).sum();
 
     Ok(total.to_string())
 }

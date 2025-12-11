@@ -1,6 +1,6 @@
 use std::collections::{HashSet, VecDeque};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use super::{Button, Lights, Machine, parse_machines};
 
@@ -14,7 +14,7 @@ fn apply_button(state: &[Lights], button: &Button) -> Vec<Lights> {
         };
     }
 
-    new_state.into()
+    new_state
 }
 
 fn min_total_presses(machine: &Machine) -> Option<u64> {
@@ -44,7 +44,7 @@ pub fn run(input: &str) -> Result<String> {
 
     let min_total_presses = machines
         .iter()
-        .map(|machine| min_total_presses(machine).ok_or(anyhow::anyhow!("no solution")))
+        .map(|machine| min_total_presses(machine).context("no solution"))
         .sum::<Result<u64>>()?;
 
     Ok(min_total_presses.to_string())

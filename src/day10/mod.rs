@@ -32,14 +32,17 @@ fn parse_indicator(indicator: &str) -> Vec<Lights> {
             '#' => Some(Lights::On),
             _ => None,
         })
-        .collect::<Vec<_>>()
+        .collect()
 }
 
 fn parse_button(button: &str) -> Result<Button> {
-    button[1..button.len() - 1]
+    button
+        .strip_prefix('(')
+        .and_then(|s| s.strip_suffix(')'))
+        .context("expected parentheses")?
         .split(',')
         .map(|s| s.parse::<u8>().context("expected number"))
-        .collect::<Result<Vec<_>>>()
+        .collect()
 }
 
 fn parse_buttons(buttons: Vec<&str>) -> Result<Vec<Button>> {
