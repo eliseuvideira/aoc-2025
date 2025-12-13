@@ -292,10 +292,10 @@ fn find_minimum_presses(
     current_best: Option<i64>,
 ) -> Option<i64> {
     let partial_sum: i64 = unbound_values.iter().sum();
-    if let Some(best) = current_best {
-        if partial_sum >= best {
-            return None;
-        }
+    if let Some(best) = current_best
+        && partial_sum >= best
+    {
+        return None;
     }
 
     if depth == formulas.first().map_or(0, |f| f.terms.len()) {
@@ -304,16 +304,14 @@ fn find_minimum_presses(
         let mut solution = Vec::new();
 
         for formula in formulas {
-            let Some(val) = formula.evaluate(unbound_values) else {
-                return None;
-            };
+            let val = formula.evaluate(unbound_values)?;
             if val < 0 {
                 return None;
             }
-            if let Some(best) = current_best {
-                if sum + val >= best {
-                    return None;
-                }
+            if let Some(best) = current_best
+                && sum + val >= best
+            {
+                return None;
             }
             #[cfg(debug_assertions)]
             solution.push((formula.variable, val));

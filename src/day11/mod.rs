@@ -13,7 +13,7 @@ pub fn parse_input(input: &str) -> Result<HashMap<&str, Vec<&str>>> {
 
     for line in input.lines() {
         let (key, value) = line.split_once(':').context("expected colon")?;
-        let value: Vec<_> = value.trim_start().split_whitespace().collect();
+        let value: Vec<_> = value.split_whitespace().collect();
         map.insert(key, value);
     }
 
