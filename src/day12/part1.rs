@@ -35,9 +35,9 @@ fn parse_input(input: &str) -> Result<(Vec<Shape>, Vec<Region>)> {
         ];
 
         let mut shape = Vec::new();
-        for y in 0..3 {
-            for x in 0..3 {
-                if rows[y][x] == '#' {
+        for (y, row) in rows.iter().enumerate() {
+            for (x, &ch) in row.iter().enumerate() {
+                if ch == '#' {
                     shape.push((x as u8, y as u8));
                 }
             }
@@ -67,7 +67,6 @@ fn parse_input(input: &str) -> Result<(Vec<Shape>, Vec<Region>)> {
         let height = height.parse::<u8>().context("expected number")?;
 
         let shape_counts = counts
-            .trim()
             .split_whitespace()
             .map(|p| p.parse::<u8>().context("expected number"))
             .collect::<Result<Vec<_>>>()?;
@@ -93,7 +92,7 @@ fn fits_in_area(region: &Region, shapes: &[Shape]) -> bool {
 }
 
 fn normalize_shape(mut shape: Shape) -> Shape {
-    shape.sort_by(|a, b| a.cmp(b));
+    shape.sort();
     shape
 }
 
